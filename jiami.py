@@ -97,7 +97,6 @@ class Login:
             return False
 
 
-
 def get_token(acc, pwd):
     login = Login()
     if login.get_token_pho(acc, pwd):

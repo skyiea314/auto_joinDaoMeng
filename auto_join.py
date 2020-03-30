@@ -1,9 +1,10 @@
-from jiami import *
+from jiami import get_token
 from test import Post, test_token
 import os
 import datetime
 import threading
 import time
+
 
 user = input('请输入账号')
 passwd = input('请输入密码')
@@ -27,22 +28,21 @@ class Opreation:
         # 修复bug防止因为token过期
         if os.path.exists('a.ini'):
             if test_token():
-                print('登录成功')
+                print('token登录成功')
                 return True
             elif get_token(acc, pwd):
-                print('登录成功')
+                print('密码登录成功')
                 return True
             else:
-                print('请检查账号密码')
+                print('token过期请检查账号密码')
                 os.remove('a.ini')
                 return False
         else:
             if get_token(acc, pwd):
-                print('登录成功')
+                print('密码登录成功')
                 return True
             else:
                 print('请检查账号密码')
-                os.remove('a.ini')
                 return False
 
     # 获取规划中的列表
@@ -90,14 +90,13 @@ opreation = Opreation()
 
 # 增加定时功能
 def update():
-    opreation.login()
-    opreation.read()
-    opreation.get_aid()
-    opreation.chiken()
-    print("更新成功")
-    timer = threading.Timer(3600, update)
-    timer.start()
-
+    if opreation.login():
+        opreation.read()
+        opreation.get_aid()
+        opreation.chiken()
+        print("更新成功")
+        timer = threading.Timer(1800, update)
+        timer.start()
 
 def join():
     # 按时间顺序报名,时间相同则会发生冲突
@@ -111,6 +110,7 @@ def join():
         print('正在等待报名时间.....')
         while True:
             now = datetime.datetime.now()
+
             # 对比时间，时间到的话就报名
             if now >= join_time:
                 # 重复四次报名
@@ -119,11 +119,12 @@ def join():
                     if opreation.enter(time_aid[set_time]):
                         break
                     time.sleep(0.01)
-                # 将已报名信息从字典与列表中删除
-                aids.remove(time_aid[set_time])
+                # 将已报名信息从字典中删除
+                aids.pop(time_aid[set_time])
                 time_aid.pop(set_time)
                 # 中断内层循环
                 break
+            time.sleep(0.1)
 
 
 def main():
@@ -136,7 +137,7 @@ def main():
         print('欢迎您'+opreation.name)
         opreation.get_aid()
         opreation.chiken()
-        timer = threading.Timer(3600, update)
+        timer = threading.Timer(1800, update)
         timer.start()
         join()
 
