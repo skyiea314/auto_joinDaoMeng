@@ -32,8 +32,6 @@ class Post:
 
         res = requests.post(url, headers=self.headers, data=data).json()
         # print(res)
-        with open('data2.json','w',encoding='utf-8') as f:
-            json.dump(res, f, ensure_ascii=False)
         names = jsonpath.jsonpath(res, '$..name')
         ids = jsonpath.jsonpath(res, '$..aid')
         status = jsonpath.jsonpath(res, '$..status')
