@@ -7,7 +7,7 @@ import time
 
 user = input('请输入账号')
 passwd = input('请输入密码')
-aids = []
+aids = {}
 time_aid = {}
 
 
@@ -24,19 +24,25 @@ class Opreation:
 
         acc = user
         pwd = passwd
-
+        # 修复bug防止因为token过期
         if os.path.exists('a.ini'):
             if test_token():
+                print('登录成功')
+                return True
+            elif get_token(acc, pwd):
+                print('登录成功')
                 return True
             else:
-                print('登录失效，请重新登录')
+                print('请检查账号密码')
                 os.remove('a.ini')
                 return False
         else:
             if get_token(acc, pwd):
+                print('登录成功')
                 return True
             else:
                 print('请检查账号密码')
+                os.remove('a.ini')
                 return False
 
     # 获取规划中的列表
@@ -47,18 +53,18 @@ class Opreation:
         for name, id, status in zip(a.names, a.ids, a.status):
             # 防止重复添加
             if(status == "2")and(id not in aids):
-                print(name+':'+id)
-                aids.append(id)
+                # print(name+':'+id)
+                aids[id] = name
 
     def chiken(self):
-        for aid in aids:
+        for aid in aids.keys():
             a = Post()
             res = a.get_info(aid, self.token, self.uid)
 
             if res:
                 # 判断是否有存在的键值对,以免重复添加
                 # 将时间:aid加入字典中
-                print(res['data']['joindate'])
+                print(aids[aid]+"报名时间:"+res['data']['joindate'])
                 time_aid[res['data']['joindate']] = aid
 
             else:
@@ -69,7 +75,7 @@ class Opreation:
         res = a.join(id, self.token, self.uid)
         if res:
             if res['code'] == '100':
-                print('报名成功')
+                print(aids[id]+'报名成功')
                 return True
             else:
                 print(res['msg'])
@@ -100,11 +106,10 @@ def join():
         # 将时间字符串裁剪只取前半部分,并格式化时间
         join_time = set_time.split('-')[0]
         join_time = datetime.datetime.strptime(join_time, '%Y.%m.%d %H:%M')
-        print('即将报名的活动时间:')
+        print('即将报名的活动:'+aids[time_aid[set_time]])
         print(join_time)
         print('正在等待报名时间.....')
         while True:
-            # 进行判断若是大于一个小时就一小时循环一次,小于
             now = datetime.datetime.now()
             # 对比时间，时间到的话就报名
             if now >= join_time:
@@ -138,4 +143,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
