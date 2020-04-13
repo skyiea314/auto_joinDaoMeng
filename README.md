@@ -10,9 +10,10 @@
 # 运行方式
 
 ## win 
-> 环境:推荐使用conda,不用再自行pip库
+
 - git clone https://github.com/skyiea314/auto_joinDaoMeng
 - cd auto_joinDaoMeng
+- pip install -r requirements.txt
 - python ./auto_join.py
 
   

@@ -53,7 +53,7 @@ class Opreation:
         for name, id, status in zip(a.names, a.ids, a.status):
             # 防止重复添加
             if(status == "2")and(id not in aids):
-                # print(name+':'+id)
+                # print(name+':'+id+status)
                 aids[id] = name
 
     def chiken(self):
@@ -64,7 +64,7 @@ class Opreation:
             if res:
                 # 判断是否有存在的键值对,以免重复添加
                 # 将时间:aid加入字典中
-                print(aids[aid]+"报名时间:"+res['data']['joindate'])
+                # print(aids[aid]+"报名时间:"+res['data']['joindate'])
                 time_aid[res['data']['joindate']] = aid
 
             else:
@@ -78,7 +78,7 @@ class Opreation:
                 print(aids[id]+'报名成功')
                 return True
             else:
-                print(res['msg'])
+                print('报名失败')
                 return False
         else:
             print('查询失败，请检查id')
@@ -95,8 +95,9 @@ def update():
         opreation.get_aid()
         opreation.chiken()
         print("更新成功")
-        timer = threading.Timer(1800, update)
+        timer = threading.Timer(3600, update)
         timer.start()
+
 
 def join():
     # 按时间顺序报名,时间相同则会发生冲突
@@ -135,9 +136,10 @@ def main():
         opreation.read()
         print('正在初始化')
         print('欢迎您'+opreation.name)
+
         opreation.get_aid()
         opreation.chiken()
-        timer = threading.Timer(1800, update)
+        timer = threading.Timer(3600, update)
         timer.start()
         join()
 

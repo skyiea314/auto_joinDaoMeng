@@ -1,0 +1,4 @@
+requests
+jsonpath
+pyDes
+pycryptodome
